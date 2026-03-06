@@ -3,7 +3,31 @@ const crypto = require('crypto');
 
 const app = express();
 app.use(express.json());
+// Trạm trung chuyển: Hứng người dùng từ VNPAY đá về, rồi ném ngược vào App
+app.get('/vnpay-return', (req, res) => {
+    const appLink = req.query.appLink;
+    if (appLink) {
+        // Gom lại mấy cái thông số hóa đơn của VNPAY gửi về
+        let queryParams = new URLSearchParams(req.query);
+        queryParams.delete('appLink'); 
+        const finalLink = `${appLink}?${queryParams.toString()}`;
 
+        res.send(`
+            <!DOCTYPE html>
+            <html><head><meta charset="utf-8"><title>Đang về App...</title></head>
+            <body style="text-align: center; padding-top: 50px; font-family: sans-serif; background: #fce4ec; color: #d82d8b;">
+                <h2>Giao dịch hoàn tất!</h2>
+                <p>Hệ thống đang tự động đưa sếp về lại Monica Wallet...</p>
+                <script>
+                    // Tự động đá về app sau 1 giây
+                    setTimeout(() => { window.location.href = "${finalLink}"; }, 1000);
+                </script>
+            </body></html>
+        `);
+    } else {
+        res.send("Thành công! Sếp tự vuốt về app nhé.");
+    }
+});
 // Sếp giữ nguyên Secret Key này nhé
 const VNPAY_SECRET = "S9HTHYBJ2L9U2JPVYCDOBFALPZANZ8JU";
 
@@ -67,4 +91,5 @@ function sortObject(obj) {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Server Monica IPN đang chạy trên cổng ${PORT}`);
+
 });
