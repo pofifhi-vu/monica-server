@@ -2,7 +2,7 @@ const express = require('express');
 const crypto = require('crypto');
 const admin = require('firebase-admin');
 
-// 1. KẾT NỐI FIREBASE (Sếp giữ nguyên két sắt trên Render là nó tự nhận)
+// 1. KẾT NỐI FIREBASE BẰNG KÉT SẮT RENDER
 if (!admin.apps.length) {
     admin.initializeApp({
         credential: admin.credential.cert({
@@ -17,31 +17,26 @@ const db = admin.firestore();
 const app = express();
 app.use(express.json());
 
-// Khóa bảo mật Sandbox của sếp
+// Khóa bảo mật Sandbox của anh
 const VNPAY_SECRET = "S9HTHYBJ2L9U2JPVYCDOBFALPZANZ8JU";
 
-// TRẠM TRUNG CHUYỂN (Đá người dùng về App)
+// 🔥 TRẠM TRUNG CHUYỂN: Đá thẳng về app bằng biển số xe "monicawallet"
 app.get('/vnpay-return', (req, res) => {
-    const appLink = req.query.appLink;
-    if (appLink) {
-        let queryParams = new URLSearchParams(req.query);
-        queryParams.delete('appLink'); 
-        const finalLink = `${appLink}?${queryParams.toString()}`;
-
-        res.send(`
-            <!DOCTYPE html>
-            <html><head><meta charset="utf-8"><title>Đang về App...</title></head>
-            <body style="text-align: center; padding-top: 50px; font-family: sans-serif; background: #fce4ec; color: #d82d8b;">
-                <h2>Giao dịch hoàn tất!</h2>
-                <p>Hệ thống đang tự động đưa sếp về lại Monica Wallet...</p>
-                <script>
-                    setTimeout(() => { window.location.href = "${finalLink}"; }, 1000);
-                </script>
-            </body></html>
-        `);
-    } else {
-        res.send("Thành công! Sếp tự vuốt về app nhé.");
-    }
+    res.send(`
+        <!DOCTYPE html>
+        <html><head><meta charset="utf-8"><title>Đang về App...</title></head>
+        <body style="text-align: center; padding-top: 50px; font-family: sans-serif; background: #fce4ec; color: #d82d8b;">
+            <h2>Giao dịch hoàn tất!</h2>
+            <p>Hệ thống đang tự động đưa sếp về lại Monica Wallet...</p>
+            
+            <a href="monicawallet://" style="display:inline-block; margin-top: 20px; padding: 15px 30px; background: #d82d8b; color: #fff; text-decoration: none; border-radius: 10px; font-weight: bold; font-size: 16px;">MỞ LẠI APP MONICA</a>
+            
+            <script>
+                // Tự động đá về app sau 1 giây
+                setTimeout(() => { window.location.href = "monicawallet://"; }, 1000);
+            </script>
+        </body></html>
+    `);
 });
 
 // CỔNG IPN BẮT HÓA ĐƠN TỪ VNPAY
@@ -53,7 +48,6 @@ app.get('/vnpay-ipn', async (req, res) => {
         delete vnp_Params['vnp_SecureHash'];
         delete vnp_Params['vnp_SecureHashType'];
 
-        // 🔥 THUẬT TOÁN ĐỒNG BỘ 100% VỚI APP REACT NATIVE 🔥
         let sortedKeys = Object.keys(vnp_Params).sort();
         let signData = "";
         
