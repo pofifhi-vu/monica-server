@@ -152,7 +152,7 @@ app.get('/paypal-return', async (req, res) => {
                 <!DOCTYPE html>
                 <html><head><meta charset="utf-8"><title>Thanh toán thành công</title></head>
                 <body style="text-align: center; padding-top: 50px; font-family: sans-serif; background: #e0f7fa; color: #00796b;">
-                    <h2>PayPal: Giao dịch 80 USD hoàn tất!</h2>
+                    <h2>PayPal: Giao dịch 8 USD hoàn tất!</h2>
                     <p>Hệ thống đang tự động đưa anh về lại App...</p>
                     <script>setTimeout(() => { window.location.href = "monicawallet://"; }, 1500);</script>
                 </body></html>
@@ -170,4 +170,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Server Monica IPN đang chạy trên cổng ${PORT}`);
 });
+
 
