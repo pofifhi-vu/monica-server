@@ -105,7 +105,7 @@ app.get('/paypal-pay', async (req, res) => {
             headers: { 'Authorization': `Bearer ${tokenData.access_token}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 intent: "CAPTURE",
-                purchase_units: [{ reference_id: username, amount: { currency_code: "USD", value: "80.00" } }],
+                purchase_units: [{ reference_id: username, amount: { currency_code: "USD", value: "8.00" } }],
                 application_context: {
                     return_url: `https://monica-server-u9ko.onrender.com/paypal-return?username=${username}`,
                     cancel_url: `https://monica-server-u9ko.onrender.com/vnpay-return` 
@@ -170,3 +170,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Server Monica IPN đang chạy trên cổng ${PORT}`);
 });
+
